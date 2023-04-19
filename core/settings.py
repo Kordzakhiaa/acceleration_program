@@ -15,8 +15,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
+
+THIRD_PARTY_APPS = [
+    'rest_framework',
+    'rest_framework_simplejwt',
+]
+
+PROJECT_APPS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -25,7 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-]
+] + THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
