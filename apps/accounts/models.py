@@ -16,6 +16,9 @@ class CustomUserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
+
+        if user.is_superuser:
+            user.user_type = user.UserTypes.ADMIN  # SETTING SUPERUSER STATUS AS ADMIN
         user.save(using=self._db)
 
         return user
@@ -33,10 +36,22 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUserModel(AbstractUser):
+    class UserTypes(models.TextChoices):
+        STANDARD = _("Standard")
+        STUFF_ACCELERATION = _("Stuff-Acceleration")
+        STUFF_DIRECTION = _("Stuff-Direction")
+        ADMIN = _("Admin")
+
     username = None  # THIS FIELD IS NOT REQUIRED
     first_name = models.CharField(max_length=150, null=True)
     last_name = models.CharField(max_length=150, null=True)
     email = models.EmailField(_("email address"), unique=True)
+
+    user_type = models.CharField(
+        max_length=150,
+        choices=UserTypes.choices,
+        default=UserTypes.STANDARD,
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
