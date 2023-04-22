@@ -52,6 +52,7 @@ class CustomUserModel(AbstractUser):
         choices=UserTypes.choices,
         default=UserTypes.STANDARD,
     )
+    cv = models.FileField(null=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
