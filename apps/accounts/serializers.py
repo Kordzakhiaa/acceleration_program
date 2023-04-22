@@ -13,7 +13,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUserModel
-        fields = ['email', 'password', 'confirm_password']
+        fields = ['email', 'password', 'confirm_password', 'cv']
 
     def validate(self, data: "OrderedDict") -> "OrderedDict":
         """This method helps us to validate each step during user registration"""
