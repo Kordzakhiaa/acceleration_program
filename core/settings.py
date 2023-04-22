@@ -19,6 +19,9 @@ ALLOWED_HOSTS = []
 THIRD_PARTY_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
+
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
 ]
 
 PROJECT_APPS = [
@@ -118,5 +121,16 @@ AUTH_USER_MODEL = "accounts.CustomUserModel"
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Acceleration Program API',
+    'DESCRIPTION': 'Acceleration program desc',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_DIST': 'SIDECAR',
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
 }
