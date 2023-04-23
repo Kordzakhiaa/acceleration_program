@@ -1,0 +1,202 @@
+[
+  {
+    "model": "directions.Direction",
+    "pk": 1,
+    "fields": {
+      "title": "Java",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 2,
+    "fields": {
+      "title": "Android",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 3,
+    "fields": {
+      "title": "iOS",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 4,
+    "fields": {
+      "title": "UI/UX",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 5,
+    "fields": {
+      "title": "Data Engineer",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 6,
+    "fields": {
+      "title": "DataBase",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 7,
+    "fields": {
+      "title": "Python",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 8,
+    "fields": {
+      "title": "React",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 9,
+    "fields": {
+      "title": "Angular",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 10,
+    "fields": {
+      "title": "JavaScript",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 11,
+    "fields": {
+      "title": "Node JS",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 12,
+    "fields": {
+      "title": "Vue JS",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 13,
+    "fields": {
+      "title": "Salesforce",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 14,
+    "fields": {
+      "title": "Mark Up",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 15,
+    "fields": {
+      "title": "QA",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 16,
+    "fields": {
+      "title": "Project Management",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 17,
+    "fields": {
+      "title": "Business Analyst",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 18,
+    "fields": {
+      "title": "Laravel",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 19,
+    "fields": {
+      "title": "Symfony",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 20,
+    "fields": {
+      "title": ".Net",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 21,
+    "fields": {
+      "title": "React Native",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 22,
+    "fields": {
+      "title": "Flutter",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 23,
+    "fields": {
+      "title": "Golang",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 24,
+    "fields": {
+      "title": "DevOps",
+      "number_of_stages": 3
+    }
+  },
+  {
+    "model": "directions.Direction",
+    "pk": 25,
+    "fields": {
+      "title": "Linux",
+      "number_of_stages": 3
+    }
+  }
+]
