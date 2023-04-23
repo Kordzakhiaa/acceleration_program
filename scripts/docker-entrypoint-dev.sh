@@ -6,5 +6,8 @@ python manage.py makemigrations
 echo "Running migrations"
 python manage.py migrate
 
+echo "Loading Fixtures"
+python manage.py loaddata fixtures/*.json
+
 echo "Running server"
 python manage.py runserver 0.0.0.0:8000
