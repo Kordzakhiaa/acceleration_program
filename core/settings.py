@@ -27,6 +27,7 @@ THIRD_PARTY_APPS = [
 PROJECT_APPS = [
     'apps.accounts.apps.AccountsConfig',
     'apps.directions.apps.DirectionsConfig',
+    'apps.acceleration_program.apps.AccelerationProgramConfig',
 ]
 
 INSTALLED_APPS = [
