@@ -26,6 +26,7 @@ THIRD_PARTY_APPS = [
 
 PROJECT_APPS = [
     'apps.accounts.apps.AccountsConfig',
+    'apps.directions.apps.DirectionsConfig',
 ]
 
 INSTALLED_APPS = [
@@ -134,3 +135,5 @@ SPECTACULAR_SETTINGS = {
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
     'REDOC_DIST': 'SIDECAR',
 }
+
+FIXTURE_DIRS = ["fixtures"]
