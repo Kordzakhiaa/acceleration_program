@@ -61,6 +61,10 @@ class JoinProgram(models.Model):
     def __str__(self):
         return f"direction={self.direction} - program={self.program}"
 
+    def save(self, *args, **kwargs):
+        self.joined_applicants = self.applicants.count()
+        super().save(*args, **kwargs)
+
 
 class OrderedStages(models.Model):
     join_program = models.ForeignKey(to=JoinProgram, on_delete=models.CASCADE)
