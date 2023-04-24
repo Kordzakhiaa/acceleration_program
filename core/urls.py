@@ -11,6 +11,7 @@ urlpatterns = [
     # PROJECT APPS ENDPOINTS
     path('api/auth/', include('apps.accounts.urls')),
     path('api/directions/', include('apps.directions.urls')),
+    path('api/acceleration_program/', include('apps.acceleration_program.urls')),
 
     # THIRD-PARTY APPS ENDPOINTS
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
