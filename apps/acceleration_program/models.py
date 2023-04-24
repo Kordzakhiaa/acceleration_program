@@ -21,6 +21,15 @@ class AccelerationProgram(models.Model):
     def __str__(self):
         return f"{self.name} - active={self.is_active}"
 
+    def save(self, *args, **kwargs):
+        """
+        Overriding save method to ensure that after calling save,
+        templates of JoinProgram should be created based on chosen direction
+        """
+        super().save(*args, **kwargs)
+        for direction in self.directions.all():
+            JoinProgram.objects.update_or_create(program=self, direction=direction)
+
 
 class StageType(models.Model):
     class StageTypes(models.TextChoices):
