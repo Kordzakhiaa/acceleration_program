@@ -34,11 +34,13 @@ class AccelerationProgramViewSet(ModelViewSet):
 
 
 class RegisteredApplicantsListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
     serializer_class = RegisteredApplicantsSerializer
     queryset = Applicants.objects.all()
 
 
 class JoinProgramListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
     serializer_class = JoinProgramSerializer
     queryset = JoinProgram.objects.all()
 
@@ -47,11 +49,12 @@ class JoinProgramListAPIView(ListAPIView):
 
 
 class RegisterApplicant(CreateAPIView):
+    permission_classes = (IsAuthenticated,)
     serializer_class = ApplicantsRegistrationSerializer
     queryset = Applicants.objects.all()
 
     def create(self, request: "Request", *args, **kwargs) -> "Response":
-        serializer = self.get_serializer(data=request.data, context={"applicant": request.user})
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
