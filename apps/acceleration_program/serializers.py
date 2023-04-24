@@ -25,7 +25,13 @@ class AccelerationProgramSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, attrs: "OrderedDict") -> "OrderedDict":
-        """Method that is"""
+        """
+        Method that validates AccelerationProgram instance based on name and status
+        E.g:
+            name = Foo
+            status = True
+            And data in DB is already with this name and status, it will raise exception
+        """
         name, status = attrs.get("name"), attrs.get("is_active")
         if AccelerationProgram.objects.filter(name=name, is_active=True):
             raise serializers.ValidationError({"detail": "Active acceleration program with this name already exists"})
