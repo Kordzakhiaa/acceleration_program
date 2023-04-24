@@ -84,6 +84,9 @@ class Applicants(models.Model):
     join_request_date = models.DateTimeField(auto_now_add=True)
     request_status = models.CharField(max_length=150, default=RequestStatuses.PENDING, choices=RequestStatuses.choices)
 
+    class Meta:
+        unique_together = ["program_to_join", "applicant"]
+
     def __str__(self):
         return f"{self.applicant} - {self.program_to_join}"
 
