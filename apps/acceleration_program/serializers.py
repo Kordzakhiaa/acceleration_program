@@ -1,3 +1,5 @@
+from typing import OrderedDict
+
 from rest_framework import serializers
 
 from apps.acceleration_program.models import (
@@ -21,6 +23,13 @@ class AccelerationProgramSerializer(serializers.ModelSerializer):
             "registration_end_date",
             "is_active",
         ]
+
+    def validate(self, attrs: "OrderedDict") -> "OrderedDict":
+        """Method that is"""
+        name, status = attrs.get("name"), attrs.get("is_active")
+        if AccelerationProgram.objects.filter(name=name, is_active=True):
+            raise serializers.ValidationError({"detail": "Active acceleration program with this name already exists"})
+        return attrs
 
     @staticmethod
     def create_joinprogram_template(instance: "AccelerationProgram") -> None:  # noqa
