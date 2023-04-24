@@ -14,6 +14,7 @@ class AccelerationProgram(models.Model):
     program_start_time = models.DateField()
     program_end_time = models.DateField()
 
+    registration_start_date = models.DateField()
     registration_end_date = models.DateField()
     is_active = models.BooleanField(default=True)
 
