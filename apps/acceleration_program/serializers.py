@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.acceleration_program.models import AccelerationProgram
+from apps.acceleration_program.models import AccelerationProgram, Applicants
 
 
 class AccelerationProgramSerializer(serializers.ModelSerializer):
@@ -17,3 +17,9 @@ class AccelerationProgramSerializer(serializers.ModelSerializer):
             "registration_end_date",
             "is_active",
         ]
+
+
+class RegisteredApplicantsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Applicants
+        fields = "__all__"
