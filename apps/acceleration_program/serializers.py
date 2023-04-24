@@ -60,13 +60,16 @@ class RegisteredApplicantsSerializer(serializers.ModelSerializer):
 
 
 class ApplicantsRegistrationSerializer(serializers.ModelSerializer):
+    applicant = serializers.StringRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Applicants
-        fields = ["id", "program_to_join"]
+        fields = ["id", "applicant", "program_to_join"]
 
-    def validate(self, attrs):
-        applicant = attrs.get("applicant")
-        program_to_join = attrs.get("program_to_join")
-        Applicants.objects.create(applicant=applicant, program_to_join=program_to_join)
-
-        return attrs
+    def create(self, validated_data):
+        applicant = Applicants(
+            program_to_join=validated_data['program_to_join'],
+            applicant=self.context['request'].user
+        )
+        applicant.save()
+        return applicant
