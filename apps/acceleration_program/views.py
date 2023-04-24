@@ -45,9 +45,6 @@ class JoinProgramListAPIView(ListAPIView):
     queryset = JoinProgram.objects.all()
 
 
-# TODO: pending applicants are saved we need to dont! only accepted
-
-
 class RegisterApplicant(CreateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = ApplicantsRegistrationSerializer
