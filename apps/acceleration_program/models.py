@@ -50,20 +50,16 @@ class JoinProgram(models.Model):
     program = models.ForeignKey(to=AccelerationProgram, on_delete=models.CASCADE)
     direction = models.ForeignKey(to=Direction, on_delete=models.PROTECT)
 
-    applicants = models.ManyToManyField(to=CustomUserModel, through="Applicants", blank=True)
+    applicants = models.ManyToManyField(to=CustomUserModel, through="Applicants")
     stages_data = models.ManyToManyField(to=Stage, through="OrderedStages")
 
-    joined_applicants = models.IntegerField()
+    joined_applicants = models.IntegerField(blank=True, null=True)
 
     class Meta:
         unique_together = ["direction", "program"]
 
     def __str__(self):
         return f"direction={self.direction} - program={self.program}"
-
-    def save(self, *args, **kwargs):
-        self.joined_applicants = self.applicants.count()
-        super().save(*args, **kwargs)
 
 
 class OrderedStages(models.Model):
