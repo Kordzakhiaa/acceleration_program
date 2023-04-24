@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from apps.directions.views import DirectionsModelViewSet
 
-app_name: str = "acceleration_program"
+app_name: str = "directions"
 
 router = DefaultRouter()
 router.register('direction', DirectionsModelViewSet, basename='direction')
