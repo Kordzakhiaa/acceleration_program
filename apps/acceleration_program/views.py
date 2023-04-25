@@ -11,7 +11,7 @@ from apps.acceleration_program.models import (
     Applicants,
     JoinProgram,
 )
-from apps.acceleration_program.permissions import IsStuffAccelerationOrAdminUser
+from apps.acceleration_program.permissions import IsStuffAccelerationOrAdminUser, IsOwnerAdminStuffOrReadOnly
 from apps.acceleration_program.serializers import (
     AccelerationProgramSerializer,
     RegisteredApplicantsSerializer,
@@ -53,13 +53,13 @@ class AccelerationProgramViewSet(ModelViewSet):
 
 @extend_schema(tags=["Applicants"])
 class ApplicantModelViewSet(ModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsOwnerAdminStuffOrReadOnly)
     serializer_class = RegisteredApplicantsSerializer
     queryset = Applicants.objects.all()
     http_method_names = ["get", "post", "put", "patch", "delete"]
 
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.action == "create":
             return ApplicantsRegistrationSerializer
         return self.serializer_class
 
