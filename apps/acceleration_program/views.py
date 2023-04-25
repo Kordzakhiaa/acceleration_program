@@ -1,3 +1,5 @@
+from typing import Type, Union
+
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.generics import ListAPIView
@@ -21,6 +23,7 @@ from apps.acceleration_program.serializers import (
     ApplicantsRegistrationSerializer,
     StageSerializer,
     OrderedStagesSerializer,
+    OrderedStagesCreationSerializer,
 )
 
 
@@ -87,3 +90,14 @@ class OrderedStageModelViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated, IsStuffAccelerationOrAdminUser)
     queryset = OrderedStages.objects.all()
     serializer_class = OrderedStagesSerializer
+
+    def get_serializer_class(self) -> Type[Union[OrderedStagesCreationSerializer, OrderedStagesSerializer]]:
+        """
+        Method that chooses serializer class based on action
+        E.g:
+            self.action in SAFE_METHODS it will return self.serializer_class
+            else serializer will be OrderedStagesCreationSerializer
+        """
+        if self.action in ["create", "update", "partial_update"]:
+            return OrderedStagesCreationSerializer
+        return self.serializer_class
