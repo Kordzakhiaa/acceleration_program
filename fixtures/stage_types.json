@@ -1,0 +1,30 @@
+[
+  {
+    "model": "acceleration_program.StageType",
+    "pk": 1,
+    "fields": {
+      "type": "Test"
+    }
+  },
+  {
+    "model": "acceleration_program.StageType",
+    "pk": 2,
+    "fields": {
+      "type": "Task"
+    }
+  },
+  {
+    "model": "acceleration_program.StageType",
+    "pk": 3,
+    "fields": {
+      "type": "Live Coding"
+    }
+  },
+  {
+    "model": "acceleration_program.StageType",
+    "pk": 4,
+    "fields": {
+      "type": "Interview"
+    }
+  }
+]
