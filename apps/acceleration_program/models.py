@@ -23,13 +23,7 @@ class AccelerationProgram(models.Model):
 
 
 class StageType(models.Model):
-    class StageTypes(models.TextChoices):
-        TEST = _("Test")
-        TASK = _("Task")
-        LIVE_CODING = _("Live Coding")
-        INTERVIEW = _("Interview")
-
-    type = models.CharField(max_length=150, choices=StageTypes.choices)
+    type = models.CharField(max_length=150)
 
     def __str__(self):
         return self.type
