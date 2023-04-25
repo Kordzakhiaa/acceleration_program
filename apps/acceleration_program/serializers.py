@@ -85,3 +85,20 @@ class OrderedStagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderedStages
         fields = "__all__"
+
+
+class OrderedStagesCreationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderedStages
+        fields = "__all__"
+
+    def validate(self, attrs: "OrderedDict") -> "OrderedDict":
+        """
+        Method that validates stage.direction and join_program.direction to be same
+        """
+        join_program, stage = attrs.get("join_program"), attrs.get("stage")
+
+        if stage.direction.id != join_program.direction.id:
+            raise serializers.ValidationError({"detail": "Stage direction and JoinProgram direction must be the same."})
+
+        return attrs
