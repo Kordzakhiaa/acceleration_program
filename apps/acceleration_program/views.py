@@ -10,6 +10,8 @@ from apps.acceleration_program.models import (
     AccelerationProgram,
     Applicants,
     JoinProgram,
+    Stage,
+    OrderedStages,
 )
 from apps.acceleration_program.permissions import IsStuffAccelerationOrAdminUser, IsOwnerAdminStuffOrReadOnly
 from apps.acceleration_program.serializers import (
@@ -17,6 +19,8 @@ from apps.acceleration_program.serializers import (
     RegisteredApplicantsSerializer,
     JoinProgramSerializer,
     ApplicantsRegistrationSerializer,
+    StageSerializer,
+    OrderedStagesSerializer,
 )
 
 
@@ -69,3 +73,17 @@ class JoinProgramListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = JoinProgramSerializer
     queryset = JoinProgram.objects.all()
+
+
+@extend_schema(tags=["Stage"])
+class StageModelViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated, IsStuffAccelerationOrAdminUser)
+    queryset = Stage.objects.all()
+    serializer_class = StageSerializer
+
+
+@extend_schema(tags=["Ordered Stages"])
+class OrderedStageModelViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated, IsStuffAccelerationOrAdminUser)
+    queryset = OrderedStages.objects.all()
+    serializer_class = OrderedStagesSerializer

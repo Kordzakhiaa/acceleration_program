@@ -5,7 +5,7 @@ from rest_framework import serializers
 from apps.acceleration_program.models import (
     AccelerationProgram,
     JoinProgram,
-    Applicants,
+    Applicants, Stage, OrderedStages,
 )
 
 
@@ -73,3 +73,15 @@ class ApplicantsRegistrationSerializer(serializers.ModelSerializer):
         )
         applicant.save()
         return applicant
+
+
+class StageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Stage
+        fields = "__all__"
+
+
+class OrderedStagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderedStages
+        fields = "__all__"
