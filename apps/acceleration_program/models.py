@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -70,6 +71,10 @@ class OrderedStages(models.Model):
             f"OrderedStage Object -> direction={self.join_program.direction} - "
             f"stage={self.stage} - stage_number={self.stage_number}"
         )
+
+    def clean(self):  # VALIDATION FOR DJANGO ADMIN
+        if self.stage.direction.id != self.join_program.direction.id:
+            raise ValidationError(_("Stage direction and JoinProgram direction must be the same."))
 
 
 class Applicants(models.Model):
