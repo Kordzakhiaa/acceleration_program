@@ -90,6 +90,12 @@ class Applicants(models.Model):
     def __str__(self):
         return f"{self.applicant} - {self.program_to_join}"
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.program_to_join.joined_applicants += 1
+            self.program_to_join.save()
+        super().save(*args, **kwargs)
+
 
 class ApplicantResponse(models.Model):
     class Statuses(models.TextChoices):
