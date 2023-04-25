@@ -58,15 +58,8 @@ class RegisteredApplicantsListAPIView(ListAPIView):
     queryset = Applicants.objects.all()
 
 
-@extend_schema(tags=["Join Program"])
-class JoinProgramListAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = JoinProgramSerializer
-    queryset = JoinProgram.objects.all()
-
-
 @extend_schema(tags=["Applicants"])
-class RegisterApplicant(CreateAPIView):
+class RegisterApplicantCreateAPIView(CreateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = ApplicantsRegistrationSerializer
     queryset = Applicants.objects.all()
@@ -76,3 +69,10 @@ class RegisterApplicant(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@extend_schema(tags=["Join Program"])
+class JoinProgramListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = JoinProgramSerializer
+    queryset = JoinProgram.objects.all()
