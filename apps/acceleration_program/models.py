@@ -47,7 +47,7 @@ class JoinProgram(models.Model):
     applicants = models.ManyToManyField(to=CustomUserModel, through="Applicants")
     stages_data = models.ManyToManyField(to=Stage, through="OrderedStages")
 
-    joined_applicants = models.IntegerField(blank=True, null=True)
+    joined_applicants = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ["direction", "program"]
