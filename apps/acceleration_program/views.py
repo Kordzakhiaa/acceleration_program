@@ -35,7 +35,7 @@ class AccelerationProgramViewSet(ModelViewSet):
         serializer.create_joinprogram_template(instance=instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def partial_update(self, request, *args, **kwargs):
+    def partial_update(self, request: "Request", *args, **kwargs) -> "Response":
         partial = True
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
@@ -48,7 +48,7 @@ class AccelerationProgramViewSet(ModelViewSet):
             # WE NEED TO FORCIBLY INVALIDATE THE PREFETCH CACHE ON THE INSTANCE
             instance._prefetched_objects_cache = {}
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @extend_schema(tags=["Applicants"])
