@@ -1,6 +1,6 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
-from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -11,13 +11,13 @@ from apps.acceleration_program.models import (
     Applicants,
     JoinProgram,
 )
+from apps.acceleration_program.permissions import IsStuffAccelerationOrAdminUser
 from apps.acceleration_program.serializers import (
     AccelerationProgramSerializer,
     RegisteredApplicantsSerializer,
     JoinProgramSerializer,
     ApplicantsRegistrationSerializer,
 )
-from apps.accounts.permissions import IsStuffAccelerationOrAdminUser
 
 
 @extend_schema(tags=["Programs"])
