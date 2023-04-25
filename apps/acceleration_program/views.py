@@ -1,6 +1,6 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
-from rest_framework.generics import ListAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -26,7 +26,7 @@ class AccelerationProgramViewSet(ModelViewSet):
     queryset = AccelerationProgram.objects.all()
     serializer_class = AccelerationProgramSerializer
     lookup_field = "id"
-    http_method_names = ['get', 'post', 'patch', 'delete']
+    http_method_names = ["get", "post", "patch", "delete"]
 
     def create(self, request: "Request", *args, **kwargs) -> "Response":
         serializer: "AccelerationProgramSerializer" = self.get_serializer(data=request.data)
@@ -43,7 +43,7 @@ class AccelerationProgramViewSet(ModelViewSet):
         serializer.create_joinprogram_template(instance=instance)
         self.perform_update(serializer)
 
-        if getattr(instance, '_prefetched_objects_cache', None):
+        if getattr(instance, "_prefetched_objects_cache", None):
             # IF 'PREFETCH_RELATED' HAS BEEN APPLIED TO A QUERYSET,
             # WE NEED TO FORCIBLY INVALIDATE THE PREFETCH CACHE ON THE INSTANCE
             instance._prefetched_objects_cache = {}
@@ -52,17 +52,16 @@ class AccelerationProgramViewSet(ModelViewSet):
 
 
 @extend_schema(tags=["Applicants"])
-class RegisteredApplicantsListAPIView(ListAPIView):
+class ApplicantModelViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = RegisteredApplicantsSerializer
     queryset = Applicants.objects.all()
+    http_method_names = ["get", "post", "put", "patch", "delete"]
 
-
-@extend_schema(tags=["Applicants"])
-class RegisterApplicantCreateAPIView(CreateAPIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = ApplicantsRegistrationSerializer
-    queryset = Applicants.objects.all()
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return ApplicantsRegistrationSerializer
+        return self.serializer_class
 
 
 @extend_schema(tags=["Join Program"])
