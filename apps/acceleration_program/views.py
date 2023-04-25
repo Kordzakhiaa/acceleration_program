@@ -64,12 +64,6 @@ class RegisterApplicantCreateAPIView(CreateAPIView):
     serializer_class = ApplicantsRegistrationSerializer
     queryset = Applicants.objects.all()
 
-    def create(self, request: "Request", *args, **kwargs) -> "Response":
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
 @extend_schema(tags=["Join Program"])
 class JoinProgramListAPIView(ListAPIView):
