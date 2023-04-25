@@ -43,7 +43,7 @@ class Stage(models.Model):
     assigment_with_description = models.TextField()
 
     def __str__(self):
-        return f"{self.name}"
+        return f"name={self.name} - direction={self.direction} - type={self.type}"
 
 
 class JoinProgram(models.Model):
@@ -70,6 +70,12 @@ class OrderedStages(models.Model):
 
     class Meta:
         unique_together = ["join_program", "stage"]
+
+    def __str__(self):
+        return (
+            f"OrderedStage Object -> direction={self.join_program.direction} - "
+            f"stage={self.stage} - stage_number={self.stage_number}"
+        )
 
 
 class Applicants(models.Model):
