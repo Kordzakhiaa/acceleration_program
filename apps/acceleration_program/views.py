@@ -1,8 +1,5 @@
-from typing import Type, Union
-
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
-from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -13,6 +10,8 @@ from apps.acceleration_program.models import (
     Applicants,
     JoinProgram,
     Stage,
+    ApplicantResponse,
+    StuffResponseDescription,
 )
 from apps.acceleration_program.permissions import IsStuffAccelerationOrAdminUser, IsOwnerAdminStuffOrReadOnly
 from apps.acceleration_program.serializers import (
@@ -21,6 +20,8 @@ from apps.acceleration_program.serializers import (
     JoinProgramSerializer,
     ApplicantsRegistrationSerializer,
     StageSerializer,
+    ApplicantResponseSerializer,
+    StuffResponseDescriptionSerializer,
 )
 
 
@@ -81,3 +82,20 @@ class StageModelViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated, IsStuffAccelerationOrAdminUser)
     queryset = Stage.objects.all()
     serializer_class = StageSerializer
+
+
+@extend_schema(tags=["ApplicantResponse"])
+class ApplicantResponseModelViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated, IsStuffAccelerationOrAdminUser)
+    queryset = ApplicantResponse.objects.all()
+    serializer_class = ApplicantResponseSerializer
+
+    def perform_create(self, serializer):
+        return serializer.save(applicant=self.request.user)
+
+
+@extend_schema(tags=["StuffResponseDescription"])
+class StuffResponseDescriptionModelViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated, IsStuffAccelerationOrAdminUser)
+    queryset = StuffResponseDescription.objects.all()
+    serializer_class = StuffResponseDescriptionSerializer
