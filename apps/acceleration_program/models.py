@@ -34,7 +34,7 @@ class Assignment(models.Model):
     description = models.TextField(max_length=150)
 
     def __str__(self):
-        return f"name={self.type} - direction={self.stage_set.direction}"
+        return f"Assignment_Type={self.type}"
 
 
 class Stage(models.Model):
@@ -116,3 +116,6 @@ class StuffResponseDescription(models.Model):
     applicant_response = models.ForeignKey(to=ApplicantResponse, on_delete=models.CASCADE)
     description = models.TextField()
     status = models.CharField(max_length=150, default=Statuses.NONE, choices=Statuses.choices)
+
+    def __str__(self):
+        return f"author={self.author} - {self.status}"
