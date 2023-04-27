@@ -7,7 +7,9 @@ from apps.acceleration_program.models import (
     JoinProgram,
     Applicants,
     Stage,
+    ApplicantResponse, StuffResponseDescription,
 )
+from apps.accounts.models import CustomUserModel
 
 
 class AccelerationProgramSerializer(serializers.ModelSerializer):
@@ -79,4 +81,24 @@ class ApplicantsRegistrationSerializer(serializers.ModelSerializer):
 class StageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stage
+        fields = "__all__"
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUserModel
+        fields = ["id"]
+
+
+class ApplicantResponseSerializer(serializers.ModelSerializer):
+    applicant = UserSerializer(read_only=True, default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = ApplicantResponse
+        fields = ["id", "applicant", "stage", "applicant_response_description"]
+
+
+class StuffResponseDescriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StuffResponseDescription
         fields = "__all__"
