@@ -23,22 +23,27 @@ class AccelerationProgram(models.Model):
         return f"{self.name} - active={self.is_active}"
 
 
-class StageType(models.Model):
+class AssignmentType(models.Model):
     type = models.CharField(max_length=150)
 
     def __str__(self):
         return self.type
 
 
-class Stage(models.Model):
-    direction = models.ForeignKey(to=Direction, on_delete=models.PROTECT)
-    type = models.ForeignKey(to=StageType, on_delete=models.PROTECT)
-
-    name = models.CharField(max_length=150)
-    assigment_with_description = models.TextField()
+class Assignment(models.Model):
+    type = models.ForeignKey(to=AssignmentType, on_delete=models.PROTECT)
+    description = models.TextField(max_length=150)
 
     def __str__(self):
-        return f"name={self.name} - direction={self.direction} - type={self.type}"
+        return f"name={self.type} - direction={self.stage_set.direction}"
+
+
+class Stage(models.Model):
+    assignment = models.ForeignKey(to=Assignment, on_delete=models.PROTECT)
+    name = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f"name={self.name}"
 
 
 class JoinProgram(models.Model):
@@ -46,7 +51,7 @@ class JoinProgram(models.Model):
     direction = models.ForeignKey(to=Direction, on_delete=models.PROTECT)
 
     applicants = models.ManyToManyField(to=CustomUserModel, through="Applicants")
-    stages_data = models.ManyToManyField(to=Stage, through="OrderedStages")
+    stages_data = models.ManyToManyField(to=Stage)
 
     joined_applicants = models.IntegerField(default=0)
 
@@ -55,26 +60,6 @@ class JoinProgram(models.Model):
 
     def __str__(self):
         return f"direction={self.direction} - program={self.program}"
-
-
-class OrderedStages(models.Model):
-    join_program = models.ForeignKey(to=JoinProgram, on_delete=models.CASCADE)
-    stage = models.ForeignKey(to=Stage, on_delete=models.CASCADE)
-
-    stage_number = models.PositiveIntegerField()
-
-    class Meta:
-        unique_together = ["join_program", "stage"]
-
-    def __str__(self):
-        return (
-            f"OrderedStage Object -> direction={self.join_program.direction} - "
-            f"stage={self.stage} - stage_number={self.stage_number}"
-        )
-
-    def clean(self):  # VALIDATION FOR DJANGO ADMIN
-        if self.stage.direction.id != self.join_program.direction.id:
-            raise ValidationError(_("Stage direction and JoinProgram direction must be the same."))
 
 
 class Applicants(models.Model):

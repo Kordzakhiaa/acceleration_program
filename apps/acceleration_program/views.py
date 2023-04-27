@@ -13,7 +13,6 @@ from apps.acceleration_program.models import (
     Applicants,
     JoinProgram,
     Stage,
-    OrderedStages,
 )
 from apps.acceleration_program.permissions import IsStuffAccelerationOrAdminUser, IsOwnerAdminStuffOrReadOnly
 from apps.acceleration_program.serializers import (
@@ -22,8 +21,6 @@ from apps.acceleration_program.serializers import (
     JoinProgramSerializer,
     ApplicantsRegistrationSerializer,
     StageSerializer,
-    OrderedStagesSerializer,
-    OrderedStagesCreationSerializer,
 )
 
 
@@ -83,21 +80,3 @@ class StageModelViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated, IsStuffAccelerationOrAdminUser)
     queryset = Stage.objects.all()
     serializer_class = StageSerializer
-
-
-@extend_schema(tags=["Ordered Stages"])
-class OrderedStageModelViewSet(ModelViewSet):
-    permission_classes = (IsAuthenticated, IsStuffAccelerationOrAdminUser)
-    queryset = OrderedStages.objects.all()
-    serializer_class = OrderedStagesSerializer
-
-    def get_serializer_class(self) -> Type[Union[OrderedStagesCreationSerializer, OrderedStagesSerializer]]:
-        """
-        Method that chooses serializer class based on action
-        E.g:
-            self.action in SAFE_METHODS it will return self.serializer_class
-            else serializer will be OrderedStagesCreationSerializer
-        """
-        if self.action in ["create", "update", "partial_update"]:
-            return OrderedStagesCreationSerializer
-        return self.serializer_class
