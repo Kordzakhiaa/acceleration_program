@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from apps.acceleration_program.views import (
     AccelerationProgramViewSet,
-    JoinProgramListAPIView,
+    JoinProgramModelViewSet,
     ApplicantModelViewSet,
     StageModelViewSet
 )
@@ -14,9 +14,9 @@ router = DefaultRouter()
 router.register("program", AccelerationProgramViewSet, basename="acceleration_program")
 router.register("applicant", ApplicantModelViewSet, basename="applicant")
 router.register("stage", StageModelViewSet, basename="stage")
+router.register("join_program", JoinProgramModelViewSet, basename="join_program")
 
 urlpatterns = [
-    path("join_program/list/", JoinProgramListAPIView.as_view(), name="join_program_list"),
 
     path("", include(router.urls)),
 ]

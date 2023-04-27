@@ -69,10 +69,11 @@ class ApplicantModelViewSet(ModelViewSet):
 
 
 @extend_schema(tags=["Join Program"])
-class JoinProgramListAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated,)
+class JoinProgramModelViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated, IsStuffAccelerationOrAdminUser)
     serializer_class = JoinProgramSerializer
     queryset = JoinProgram.objects.all()
+    http_method_names = ["get", "post", "patch", "delete"]
 
 
 @extend_schema(tags=["Stage"])
