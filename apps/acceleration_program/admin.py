@@ -6,6 +6,7 @@ from apps.acceleration_program.models import (
     JoinProgram,
     Applicants,
     AssignmentType,
+    Assignment,
     ApplicantResponse,
     StuffResponseDescription
 )
@@ -15,5 +16,6 @@ admin.site.register(Stage)
 admin.site.register(JoinProgram)
 admin.site.register(Applicants)
 admin.site.register(AssignmentType)
+admin.site.register(Assignment)
 admin.site.register(ApplicantResponse)
 admin.site.register(StuffResponseDescription)
