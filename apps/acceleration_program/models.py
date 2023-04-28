@@ -94,6 +94,7 @@ class ApplicantResponse(models.Model):
 
     applicant = models.ForeignKey(to=CustomUserModel, on_delete=models.CASCADE)
     stage = models.ForeignKey(to=Stage, on_delete=models.CASCADE)
+    direction = models.ForeignKey(to=Direction, on_delete=models.CASCADE)
 
     applicant_response_description = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=150, default=Statuses.PENDING, choices=Statuses.choices)
