@@ -119,6 +119,9 @@ class StuffResponseDescription(models.Model):
     description = models.TextField()
     status = models.CharField(max_length=150, default=Statuses.NONE, choices=Statuses.choices)
 
+    class Meta:
+        unique_together = ["author", "applicant_response"]
+
     def __str__(self):
         return f"author={self.author} - {self.status}"
 
