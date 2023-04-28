@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -120,3 +121,8 @@ class StuffResponseDescription(models.Model):
 
     def __str__(self):
         return f"author={self.author} - {self.status}"
+
+    def clean(self):
+        """Method that raises exception (DJANGO ADMIN INTERFACE) if author isn't admin or stuff-direction"""
+        if self.author.user_type not in ["Stuff-Direction", "Admin"]:
+            raise ValidationError("Author must be Stuff-Direction or Admin user")
