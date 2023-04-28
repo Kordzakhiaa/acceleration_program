@@ -1,3 +1,5 @@
+from typing import Type, List, Union
+
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -17,6 +19,7 @@ from apps.acceleration_program.permissions import (
     IsStuffAccelerationOrAdminUser,
     IsOwnerAdminStuffOrReadOnly,
     IsStuffDirectionOrAdminUser,
+    IsOwnerAdminOrReadOnly,
 )
 from apps.acceleration_program.serializers import (
     AccelerationProgramSerializer,
@@ -103,3 +106,20 @@ class StuffResponseDescriptionModelViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated, IsStuffDirectionOrAdminUser)
     queryset = StuffResponseDescription.objects.all()
     serializer_class = StuffResponseDescriptionSerializer
+
+    def get_permissions(self) -> List[Type[Union[IsAuthenticated, IsOwnerAdminOrReadOnly]]]:
+        """
+        Custom get_permissions method that sets permission_classes based on http method
+        E.g:
+            HTTP_METHOD in ["GET", "POST"]
+            permission_classes -> (IsAuthenticated, IsStuffDirectionOrAdminUser)
+            -------------------------------------------------------------------
+            HTTP_METHOD in ["PUT", "PATCH", "DELETE"]
+            permission_classes -> (IsAuthenticated, IsOwnerAdminOrReadOnly)
+        """
+        if self.request.method in ["PUT", "PATCH", "DELETE"]:
+            self.permission_classes = [IsAuthenticated, IsOwnerAdminOrReadOnly]
+        return super().get_permissions()
+
+    def perform_create(self, serializer):
+        return serializer.save(author=self.request.user)
