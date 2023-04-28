@@ -7,7 +7,8 @@ from apps.acceleration_program.models import (
     JoinProgram,
     Applicants,
     Stage,
-    ApplicantResponse, StuffResponseDescription,
+    ApplicantResponse,
+    StuffResponseDescription,
 )
 from apps.accounts.models import CustomUserModel
 
@@ -71,8 +72,7 @@ class ApplicantsRegistrationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         applicant = Applicants(
-            program_to_join=validated_data['program_to_join'],
-            applicant=self.context['request'].user
+            program_to_join=validated_data["program_to_join"], applicant=self.context["request"].user
         )
         applicant.save()
         return applicant
@@ -95,7 +95,35 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ApplicantResponse
-        fields = ["id", "applicant", "stage", "applicant_response_description"]
+        fields = ["id", "applicant", "stage", "direction", "applicant_response_description"]
+
+    def validate(self, attrs):
+        user_id = self.context.get("request").user.id
+        stage = attrs.get("stage")
+        direction = attrs.get("direction")
+
+        applicant = Applicants.objects.filter(applicant_id=user_id)
+
+        if not applicant:
+            raise serializers.ValidationError({"detail": "You are not registered as applicant."})
+
+        if not stage.joinprogram_set.first():
+            raise serializers.ValidationError({"detail": "You can't send response because there is no stage(s) yet."})
+
+        if applicant.filter(request_status="Pending"):
+            raise serializers.ValidationError(
+                {"detail": "Your request status is pending. Please wait or contact to our site administration"}
+            )
+
+        elif applicant.filter(request_status="Rejected"):
+            raise serializers.ValidationError({"detail": "Your request status is rejected so you can't send response."})
+
+        if not applicant.filter(program_to_join__direction=direction):
+            raise serializers.ValidationError(
+                {"detail": "Your response direction isn't appropriate for this stage, please fix it."}
+            )
+
+        return attrs
 
 
 class StuffResponseDescriptionSerializer(serializers.ModelSerializer):
