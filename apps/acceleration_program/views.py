@@ -13,7 +13,11 @@ from apps.acceleration_program.models import (
     ApplicantResponse,
     StuffResponseDescription,
 )
-from apps.acceleration_program.permissions import IsStuffAccelerationOrAdminUser, IsOwnerAdminStuffOrReadOnly
+from apps.acceleration_program.permissions import (
+    IsStuffAccelerationOrAdminUser,
+    IsOwnerAdminStuffOrReadOnly,
+    IsStuffDirectionOrAdminUser,
+)
 from apps.acceleration_program.serializers import (
     AccelerationProgramSerializer,
     RegisteredApplicantsSerializer,
@@ -96,6 +100,6 @@ class ApplicantResponseModelViewSet(ModelViewSet):
 
 @extend_schema(tags=["StuffResponseDescription"])
 class StuffResponseDescriptionModelViewSet(ModelViewSet):
-    permission_classes = (IsAuthenticated, IsStuffAccelerationOrAdminUser)
+    permission_classes = (IsAuthenticated, IsStuffDirectionOrAdminUser)
     queryset = StuffResponseDescription.objects.all()
     serializer_class = StuffResponseDescriptionSerializer
