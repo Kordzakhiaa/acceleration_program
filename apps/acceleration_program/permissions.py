@@ -29,3 +29,17 @@ class IsOwnerAdminStuffOrReadOnly(BasePermission):
         if request.method in SAFE_METHODS:
             return True
         return obj.applicant == request.user or request.user.user_type in ["Stuff-Acceleration", "Admin"]
+
+
+class IsOwnerAdminOrReadOnly(BasePermission):
+    """
+    Object-level permission to only allow updating for owner users or privileged users
+    """
+
+    def has_object_permission(self, request, view, obj) -> bool:
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        if request.method in SAFE_METHODS:
+            return True
+        return obj.author == request.user or request.user.is_superuser
+ 
