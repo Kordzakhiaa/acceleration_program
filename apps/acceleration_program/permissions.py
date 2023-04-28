@@ -9,6 +9,14 @@ class IsStuffAccelerationOrAdminUser(BasePermission):
     def has_permission(self, request, view) -> bool:
         return request.method in SAFE_METHODS or request.user.user_type in ["Stuff-Acceleration", "Admin"]
 
+class IsStuffDirectionOrAdminUser(BasePermission):
+    """Allows access only to the direction stuff members or users with the admin statuses."""
+
+    message = "You do not have permission to perform this action because you have not 'stuff-direction' status"
+
+    def has_permission(self, request, view) -> bool:
+        return request.method in SAFE_METHODS or request.user.user_type in ["Stuff-Direction", "Admin"]
+
 
 class IsOwnerAdminStuffOrReadOnly(BasePermission):
     """
