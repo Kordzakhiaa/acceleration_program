@@ -122,7 +122,7 @@ class StuffResponseDescription(models.Model):
         unique_together = ["author", "applicant_response"]
 
     def __str__(self):
-        return f"author={self.author} - {self.status}"
+        return f"author={self.author} - {self.applicant_response}"
 
     def clean(self):
         """Method that raises exception (DJANGO ADMIN INTERFACE) if author isn't admin or stuff-direction"""
