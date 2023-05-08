@@ -132,6 +132,11 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
                 {"detail": "Your response direction isn't appropriate for this stage, please fix it."}
             )
 
+        if Stage.objects.filter(applicantresponse__applicant=user_id, applicantresponse__status="Rejected"):
+            raise serializers.ValidationError(
+                {"detail": "You are rejected in previous stage, therefore you can't send response."}
+            )
+
         return attrs
 
 
