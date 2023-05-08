@@ -1,5 +1,6 @@
 from typing import OrderedDict
 
+from django.core.exceptions import NON_FIELD_ERRORS
 from rest_framework import serializers
 
 from apps.acceleration_program.models import (
@@ -97,7 +98,8 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
         model = ApplicantResponse
         fields = ["id", "applicant", "stage", "direction", "applicant_response_description"]
 
-    def validate(self, attrs):
+    def validate(self, attrs: "OrderedDict") -> "OrderedDict":
+        """TODO doc"""
         user_id = self.context.get("request").user.id
         stage = attrs.get("stage")
         direction = attrs.get("direction")
@@ -108,15 +110,22 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"detail": "You are not registered as applicant."})
 
         if not stage.joinprogram_set.first():
-            raise serializers.ValidationError({"detail": "You can't send response because there is no stage(s) yet."})
+            raise serializers.ValidationError(
+                {"detail": "You can't send response. Maybe stage exists but for program it isn't registered yet."}
+            )
 
         if applicant.filter(request_status="Pending"):
             raise serializers.ValidationError(
-                {"detail": "Your request status is pending. Please wait or contact to our site administration"}
+                {
+                    "detail": "Your request to join as an applicant is pending. "
+                    "Please wait or contact to our site administration"
+                }
             )
 
         elif applicant.filter(request_status="Rejected"):
-            raise serializers.ValidationError({"detail": "Your request status is rejected so you can't send response."})
+            raise serializers.ValidationError(
+                {"detail": "Your request to join as an applicant is rejected so you can't send response."}
+            )
 
         if not applicant.filter(program_to_join__direction=direction):
             raise serializers.ValidationError(
@@ -127,6 +136,26 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
 
 
 class StuffResponseDescriptionSerializer(serializers.ModelSerializer):
+    author = UserSerializer(read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = StuffResponseDescription
-        fields = "__all__"
+        fields = ["id", "author", "applicant_response", "description", "status"]
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=model.objects.all(),
+                fields=("author", "applicant_response"),
+                message="You have already evaluated this applicant_response. "
+                "You can't create a new one, maybe you can use your previous response to update.",
+            )
+        ]
+
+    def validate(self, attrs: "OrderedDict") -> "OrderedDict":
+        """In this method applicant_response status will change based on stuff evaluation"""
+
+        applicant_response: "ApplicantResponse" = attrs["applicant_response"]
+        status = attrs["status"]  # STATUS THAT DETERMINES IF APPLICANT RESPONSE IS ACCEPTED OR REJECTED
+        applicant_response.status = status
+        applicant_response.save()
+
+        return attrs
