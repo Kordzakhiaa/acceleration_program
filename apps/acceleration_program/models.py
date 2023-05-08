@@ -111,7 +111,6 @@ class StuffResponseDescription(models.Model):
     class Statuses(models.TextChoices):
         NONE = _("None")
         ACCEPTED = _("Accepted")
-        MAYBE = _("Maybe")
         REJECTED = _("Rejected")
 
     author = models.ForeignKey(to=CustomUserModel, on_delete=models.CASCADE)
