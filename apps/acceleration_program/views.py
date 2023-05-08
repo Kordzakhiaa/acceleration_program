@@ -106,6 +106,7 @@ class StuffResponseDescriptionModelViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated, IsStuffDirectionOrAdminUser)
     queryset = StuffResponseDescription.objects.all()
     serializer_class = StuffResponseDescriptionSerializer
+    http_method_names = ["get", "post", "put", "delete"]
 
     def get_permissions(self) -> List[Type[Union[IsAuthenticated, IsOwnerAdminOrReadOnly]]]:
         """
