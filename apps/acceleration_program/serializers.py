@@ -101,7 +101,7 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
     def validate(self, attrs: "OrderedDict") -> "OrderedDict":
         """TODO doc"""
         user_id = self.context.get("request").user.id
-        stage = attrs.get("stage")
+        stage: Stage = attrs.get("stage")
         direction = attrs.get("direction")
 
         applicant = Applicants.objects.filter(applicant_id=user_id)
@@ -132,7 +132,11 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
                 {"detail": "Your response direction isn't appropriate for this stage, please fix it."}
             )
 
-        if Stage.objects.filter(applicantresponse__applicant=user_id, applicantresponse__status="Rejected"):
+        if Stage.objects.filter(
+            joinprogram__program__is_active=True,
+            applicantresponse__applicant=user_id,
+            applicantresponse__status="Rejected",
+        ):
             raise serializers.ValidationError(
                 {"detail": "You are rejected in previous stage, therefore you can't send response."}
             )
