@@ -9,6 +9,7 @@ class IsStuffAccelerationOrAdminUser(BasePermission):
     def has_permission(self, request, view) -> bool:
         return request.method in SAFE_METHODS or request.user.user_type in ["Stuff-Acceleration", "Admin"]
 
+
 class IsStuffDirectionOrAdminUser(BasePermission):
     """Allows access only to the direction stuff members or users with the admin statuses."""
 
@@ -42,4 +43,3 @@ class IsOwnerAdminOrReadOnly(BasePermission):
         if request.method in SAFE_METHODS:
             return True
         return obj.author == request.user or request.user.is_superuser
- 
