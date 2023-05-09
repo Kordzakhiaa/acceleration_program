@@ -163,6 +163,11 @@ class StuffResponseDescriptionSerializer(serializers.ModelSerializer):
 
         applicant_response: "ApplicantResponse" = attrs["applicant_response"]
         status = attrs["status"]  # STATUS THAT DETERMINES IF APPLICANT RESPONSE IS ACCEPTED OR REJECTED
+
+        if status == "None":
+            raise serializers.ValidationError(
+                {"detail": "Status must be accepted or rejected, please use one of them."}
+            )
         applicant_response.status = status
         applicant_response.save()
 
