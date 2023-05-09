@@ -1,6 +1,5 @@
 from typing import OrderedDict
 
-from django.core.exceptions import NON_FIELD_ERRORS
 from rest_framework import serializers
 
 from apps.acceleration_program.models import (
