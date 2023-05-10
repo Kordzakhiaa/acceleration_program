@@ -21,8 +21,8 @@ class AccelerationProgramSerializer(serializers.ModelSerializer):
             "name",
             "requirements",
             "directions",
-            "program_start_time",
-            "program_end_time",
+            "program_start_date",
+            "program_end_date",
             "registration_start_date",
             "registration_end_date",
             "is_active",
@@ -36,9 +36,34 @@ class AccelerationProgramSerializer(serializers.ModelSerializer):
             status = True
             And data in DB is already with this name and status, it will raise exception
         """
-        name, status = attrs.get("name"), attrs.get("is_active")
+
+        name, status, program_start_date, program_end_date, registration_start_date, registration_end_date = (
+            attrs.get("name"),
+            attrs.get("is_active"),
+            attrs.get("program_start_date"),
+            attrs.get("program_end_date"),
+            attrs.get("registration_start_date"),
+            attrs.get("registration_end_date"),
+        )
+
         if AccelerationProgram.objects.filter(name=name, is_active=True):
             raise serializers.ValidationError({"detail": "Active acceleration program with this name already exists"})
+
+        if program_start_date > program_end_date:
+            raise serializers.ValidationError({"detail": "Program start date must be less than program end date"})
+
+        if program_start_date <= registration_start_date or program_start_date < registration_end_date:
+            raise serializers.ValidationError(
+                {"detail": "Program start date must be higher than registration start date and registration end date"}
+            )
+        if program_end_date <= registration_end_date:
+            raise serializers.ValidationError({"detail": "Program end time must be less than registration end date"})
+
+        if registration_start_date >= registration_end_date:
+            raise serializers.ValidationError(
+                {"detail": "Registration start date must be less than registration end date"}
+            )
+
         return attrs
 
     @staticmethod
