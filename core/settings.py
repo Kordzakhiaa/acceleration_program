@@ -24,6 +24,9 @@ THIRD_PARTY_APPS = [
 
     'drf_spectacular',
     'drf_spectacular_sidecar',
+
+    # CELERY
+    "django_celery_beat",
 ]
 
 PROJECT_APPS = [
@@ -152,3 +155,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(weeks=1),
 }
+
+
+CELERY_BROKER_URL = f"redis://{os.environ.get('REDIS_HOST')}:{os.environ.get('REDIS_PORT')}"
+CELERY_RESULT_BACKEND = f"redis://{os.environ.get('REDIS_HOST')}:{os.environ.get('REDIS_PORT')}"
