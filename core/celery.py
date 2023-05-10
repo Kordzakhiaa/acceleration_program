@@ -14,7 +14,7 @@ app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
     # Executes every day at 00:01
-    'add-every-monday-morning': {
+    'check-every-day': {
         'task': 'apps.acceleration_program.tasks.check_acceleration_program',
         'schedule': crontab(hour=0, minute=1),
     },
