@@ -119,7 +119,16 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
         fields = ["id", "applicant", "stage", "direction", "applicant_response_description"]
 
     def validate(self, attrs: "OrderedDict") -> "OrderedDict":
-        """TODO doc"""
+        """
+        Method that validates API call in different ways
+        ------------------------------------------------
+        RESPONSE WITH STATUS 400_BAD_REQUEST in cases when:
+        1) Request user isn't registered as an applicant
+        2) When stage exists but for program it isn't selected(registered) yet
+        3) User request to register as an applicant is PENDING or REJECTED
+        4) When direction of this program isn't appropriate
+        5) In previous stage of the program the applicant response where REJECTED
+        """
         user_id = self.context.get("request").user.id
         stage: Stage = attrs.get("stage")
         direction = attrs.get("direction")
