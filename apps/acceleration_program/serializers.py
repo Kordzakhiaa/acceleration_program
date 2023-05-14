@@ -1,5 +1,7 @@
+import json
 from typing import OrderedDict
 
+from django_celery_beat.models import ClockedSchedule, PeriodicTask
 from rest_framework import serializers
 
 from apps.acceleration_program.models import (
@@ -62,6 +64,18 @@ class AccelerationProgramSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {"detail": "Registration start date must be less than registration end date"}
             )
+
+        clocked_schedule, _ = ClockedSchedule.objects.update_or_create(
+            clocked_time=registration_end_date,
+        )
+
+        PeriodicTask.objects.update_or_create(
+            clocked=clocked_schedule,
+            name=f"Periodic task for program -> {name}",
+            task="apps.acceleration_program.tasks.check_acceleration_program",
+            args=json.dumps([name]),
+            one_off=True
+        )
 
         return attrs
 
