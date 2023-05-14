@@ -109,14 +109,11 @@ class StageSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUserModel
-        fields = ["id"]
-
-
 class ApplicantResponseSerializer(serializers.ModelSerializer):
-    applicant = UserSerializer(read_only=True, default=serializers.CurrentUserDefault())
+    applicant = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
 
     class Meta:
         model = ApplicantResponse
@@ -142,7 +139,7 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {
                     "detail": "Your request to join as an applicant is pending. "
-                    "Please wait or contact to our site administration"
+                              "Please wait or contact to our site administration"
                 }
             )
 
@@ -157,9 +154,9 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
             )
 
         if Stage.objects.filter(
-            joinprogram__program__is_active=True,
-            applicantresponse__applicant=user_id,
-            applicantresponse__status="Rejected",
+                joinprogram__program__is_active=True,
+                applicantresponse__applicant=user_id,
+                applicantresponse__status="Rejected",
         ):
             raise serializers.ValidationError(
                 {"detail": "You are rejected in previous stage, therefore you can't send response."}
@@ -169,7 +166,10 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
 
 
 class StuffResponseDescriptionSerializer(serializers.ModelSerializer):
-    author = UserSerializer(read_only=True, default=serializers.CurrentUserDefault())
+    applicant = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
 
     class Meta:
         model = StuffResponseDescription
@@ -179,7 +179,7 @@ class StuffResponseDescriptionSerializer(serializers.ModelSerializer):
                 queryset=model.objects.all(),
                 fields=("author", "applicant_response"),
                 message="You have already evaluated this applicant_response. "
-                "You can't create a new one, maybe you can use your previous response to update.",
+                        "You can't create a new one, maybe you can use your previous response to update.",
             )
         ]
 
