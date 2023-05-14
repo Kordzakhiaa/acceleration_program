@@ -95,7 +95,7 @@ class StageModelViewSet(ModelViewSet):
 
 @extend_schema(tags=["ApplicantResponse"])
 class ApplicantResponseModelViewSet(ModelViewSet):
-    permission_classes = (IsAuthenticated, IsStuffAccelerationOrAdminUser)
+    permission_classes = (IsAuthenticated,)
     queryset = ApplicantResponse.objects.all()
     serializer_class = ApplicantResponseSerializer
 
@@ -108,6 +108,9 @@ class StuffMembersResponseModelViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated, IsStuffDirectionOrAdminUser)
     queryset = StuffMembersResponse.objects.all()
     serializer_class = StuffMembersResponseSerializer
+
+    def perform_create(self, serializer):
+        return serializer.save(author=self.request.user)
 
 
 @extend_schema(tags=["StuffFinalResponseDescription"])
