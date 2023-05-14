@@ -1,4 +1,5 @@
 import json
+from datetime import date
 from typing import OrderedDict
 
 from django_celery_beat.models import ClockedSchedule, PeriodicTask
@@ -44,8 +45,8 @@ class AccelerationProgramSerializer(serializers.ModelSerializer):
             }
             If the data with the same body is in DATABASE, it will raise an exception with status 400_BAD_REQUEST
             If everything is OK it will create ClockedSchedule and PeriodicTask based on registration_end_date
-            and when time will come it will set status of this acceleration program to False
-            so after that no-one can register on this acceleration program
+            using __create_clocked_scheduled_periodic_task-method and when time will come it will set status of this
+            acceleration program to False so after that no-one can register on this program
         """
 
         name, status, program_start_date, program_end_date, registration_start_date, registration_end_date = (
@@ -75,17 +76,7 @@ class AccelerationProgramSerializer(serializers.ModelSerializer):
                 {"detail": "Registration start date must be less than registration end date"}
             )
 
-        clocked_schedule, _ = ClockedSchedule.objects.update_or_create(
-            clocked_time=registration_end_date,
-        )
-
-        PeriodicTask.objects.update_or_create(
-            clocked=clocked_schedule,
-            name=f"Periodic task for program -> {name}",
-            task="apps.acceleration_program.tasks.check_acceleration_program",
-            args=json.dumps([name]),
-            one_off=True,
-        )
+        self._create_clocked_scheduled_periodic_task(name=name, registration_end_date=registration_end_date)
 
         return attrs
 
@@ -97,6 +88,20 @@ class AccelerationProgramSerializer(serializers.ModelSerializer):
 
         for direction in instance.directions.all():
             JoinProgram.objects.update_or_create(program_id=instance.id, direction=direction)
+
+    @staticmethod
+    def _create_clocked_scheduled_periodic_task(*, name: str, registration_end_date: date) -> None:
+        clocked_schedule, _ = ClockedSchedule.objects.update_or_create(
+            clocked_time=registration_end_date,
+        )
+
+        PeriodicTask.objects.update_or_create(
+            clocked=clocked_schedule,
+            name=f"Periodic task for program -> {name}",
+            task="apps.acceleration_program.tasks.check_acceleration_program",
+            args=json.dumps([name]),
+            one_off=True,
+        )
 
 
 class JoinProgramSerializer(serializers.ModelSerializer):
