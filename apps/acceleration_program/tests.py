@@ -6,7 +6,8 @@ from django.db.models import ProtectedError
 from django.test import TestCase
 from django.utils import timezone
 
-from apps.acceleration_program.models import AccelerationProgram, AssignmentType, Assignment, Stage
+from apps.acceleration_program.models import AccelerationProgram, AssignmentType, Assignment, Stage, JoinProgram
+from apps.accounts.models import CustomUserModel
 from apps.directions.models import Direction
 
 
@@ -148,6 +149,56 @@ class StageTestCase(TestCase):
     def test_model_assignment_cascade_deletion(self):
         self.stage.delete()
         self.assignment.delete()
-        self.assertFalse(Stage.objects.filter(name='Test Stage').exists())
+        self.assertFalse(Stage.objects.filter(name="Test Stage").exists())
 
 
+class JoinProgramTestCase(TestCase):
+    def setUp(self):
+        self.assignment_type = AssignmentType.objects.create(type="Test Type")
+        self.assignment = Assignment.objects.create(type=self.assignment_type, description="Test Description")
+        self.direction = Direction.objects.create(title="Test Direction", number_of_stages=3)  # noqa
+        self.program = AccelerationProgram.objects.create(
+            name="Test Program",
+            requirements="Test Requirements",
+            program_start_date=date(2023, 1, 1),
+            program_end_date=date(2023, 12, 31),
+            registration_start_date=date(2022, 1, 1),
+            registration_end_date=date(2022, 12, 31),
+            is_active=True,
+        )
+        self.stage = Stage.objects.create(assignment=self.assignment, name="Test Stage")
+        self.user = CustomUserModel.objects.create(email="testuser@example.com")
+
+    def test_model_creation(self):
+        join_program = JoinProgram.objects.create(program=self.program, direction=self.direction)
+        join_program.applicants.add(self.user)  # noqa
+        join_program.stages_data.add(self.stage)
+
+        self.assertEqual(join_program.program, self.program)
+        self.assertEqual(join_program.direction, self.direction)
+        self.assertEqual(join_program.joined_applicants, 0)
+
+    def test_unique_together_constraint(self):
+        JoinProgram.objects.create(program=self.program, direction=self.direction)
+        with self.assertRaises(Exception):
+            JoinProgram.objects.create(program=self.program, direction=self.direction)
+
+    def test_applicants_relationship(self):
+        join_program = JoinProgram.objects.create(program=self.program, direction=self.direction)  # noqa
+        join_program.applicants.add(self.user)  # noqa
+
+        applicants = join_program.applicants.all()
+        self.assertEqual(len(applicants), 1)
+        self.assertEqual(applicants[0], self.user)
+
+    def test_stages_data_relationship(self):
+        join_program = JoinProgram.objects.create(program=self.program, direction=self.direction)  # noqa
+        join_program.stages_data.add(self.stage)
+
+        stages = join_program.stages_data.all()
+        self.assertEqual(len(stages), 1)
+        self.assertEqual(stages[0], self.stage)
+
+    def test_joined_applicants_default_value(self):
+        join_program = JoinProgram.objects.create(program=self.program, direction=self.direction)
+        self.assertEqual(join_program.joined_applicants, 0)
