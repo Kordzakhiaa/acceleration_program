@@ -227,6 +227,8 @@ class StuffFinalResponseDescriptionSerializer(serializers.ModelSerializer):
 
 
 class StuffMembersResponseSerializer(serializers.ModelSerializer):
+    author = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = StuffMembersResponse
-        fields = "__all__"
+        fields = ["id", "author", "point", "applicant_response"]
