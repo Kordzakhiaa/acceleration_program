@@ -116,7 +116,7 @@ class StuffFinalResponseDescription(models.Model):
     author = models.ForeignKey(to=CustomUserModel, on_delete=models.CASCADE)
     applicant_response = models.ForeignKey(to=ApplicantResponse, on_delete=models.CASCADE)
     description = models.TextField()
-    status = models.CharField(max_length=150, default=Statuses.NONE, choices=Statuses.choices)
+    status = models.CharField(max_length=150, choices=Statuses.choices)
 
     class Meta:
         unique_together = ["author", "applicant_response"]
@@ -126,5 +126,8 @@ class StuffFinalResponseDescription(models.Model):
 
     def clean(self):
         """Method that raises exception (DJANGO ADMIN INTERFACE) if author isn't admin or stuff-direction"""
+        if self.status == "None":
+            raise ValidationError("Status must be Accepted or Rejected not None")
+
         if self.author.user_type not in ["Stuff-Direction", "Admin"]:
             raise ValidationError("Author must be Stuff-Direction or Admin user")
