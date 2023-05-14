@@ -13,7 +13,7 @@ from apps.acceleration_program.models import (
     JoinProgram,
     Stage,
     ApplicantResponse,
-    StuffResponseDescription,
+    StuffFinalResponseDescription,
 )
 from apps.acceleration_program.permissions import (
     IsStuffAccelerationOrAdminUser,
@@ -28,7 +28,7 @@ from apps.acceleration_program.serializers import (
     ApplicantsRegistrationSerializer,
     StageSerializer,
     ApplicantResponseSerializer,
-    StuffResponseDescriptionSerializer,
+    StuffFinalResponseDescriptionModelViewSetSerializer,
 )
 
 
@@ -101,11 +101,11 @@ class ApplicantResponseModelViewSet(ModelViewSet):
         return serializer.save(applicant=self.request.user)
 
 
-@extend_schema(tags=["StuffResponseDescription"])
-class StuffResponseDescriptionModelViewSet(ModelViewSet):
+@extend_schema(tags=["StuffFinalResponseDescription"])
+class StuffFinalResponseDescriptionModelViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated, IsStuffDirectionOrAdminUser)
-    queryset = StuffResponseDescription.objects.all()
-    serializer_class = StuffResponseDescriptionSerializer
+    queryset = StuffFinalResponseDescription.objects.all()
+    serializer_class = StuffFinalResponseDescriptionModelViewSetSerializer
     http_method_names = ["get", "post", "put", "delete"]
 
     def get_permissions(self) -> List[Type[Union[IsAuthenticated, IsOwnerAdminOrReadOnly]]]:

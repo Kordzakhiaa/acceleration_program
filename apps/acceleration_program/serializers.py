@@ -10,7 +10,7 @@ from apps.acceleration_program.models import (
     Applicants,
     Stage,
     ApplicantResponse,
-    StuffResponseDescription,
+    StuffFinalResponseDescription,
 )
 
 
@@ -197,14 +197,14 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class StuffResponseDescriptionSerializer(serializers.ModelSerializer):
+class StuffFinalResponseDescriptionModelViewSetSerializer(serializers.ModelSerializer):
     applicant = serializers.PrimaryKeyRelatedField(
         read_only=True,
         default=serializers.CurrentUserDefault()
     )
 
     class Meta:
-        model = StuffResponseDescription
+        model = StuffFinalResponseDescription
         fields = ["id", "author", "applicant_response", "description", "status"]
         validators = [
             serializers.UniqueTogetherValidator(

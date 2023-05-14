@@ -107,7 +107,7 @@ class ApplicantResponse(models.Model):
         return f"{self.applicant} - {self.stage} - {self.status}"
 
 
-class StuffResponseDescription(models.Model):
+class StuffFinalResponseDescription(models.Model):
     class Statuses(models.TextChoices):
         NONE = _("None")
         ACCEPTED = _("Accepted")
