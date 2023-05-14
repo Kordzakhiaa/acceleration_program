@@ -129,6 +129,7 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
         4) When direction of this program isn't appropriate
         5) In previous stage of the program the applicant response where REJECTED
         """
+
         user_id = self.context.get("request").user.id
         stage: Stage = attrs.get("stage")
         direction = attrs.get("direction")
