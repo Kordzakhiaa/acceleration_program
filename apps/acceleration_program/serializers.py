@@ -11,6 +11,7 @@ from apps.acceleration_program.models import (
     Stage,
     ApplicantResponse,
     StuffFinalResponseDescription,
+    StuffMembersResponse,
 )
 
 
@@ -83,7 +84,7 @@ class AccelerationProgramSerializer(serializers.ModelSerializer):
             name=f"Periodic task for program -> {name}",
             task="apps.acceleration_program.tasks.check_acceleration_program",
             args=json.dumps([name]),
-            one_off=True
+            one_off=True,
         )
 
         return attrs
@@ -132,10 +133,7 @@ class StageSerializer(serializers.ModelSerializer):
 
 
 class ApplicantResponseSerializer(serializers.ModelSerializer):
-    applicant = serializers.PrimaryKeyRelatedField(
-        read_only=True,
-        default=serializers.CurrentUserDefault()
-    )
+    applicant = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
 
     class Meta:
         model = ApplicantResponse
@@ -171,7 +169,7 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {
                     "detail": "Your request to join as an applicant is pending. "
-                              "Please wait or contact to our site administration"
+                    "Please wait or contact to our site administration"
                 }
             )
 
@@ -186,9 +184,9 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
             )
 
         if Stage.objects.filter(
-                joinprogram__program__is_active=True,
-                applicantresponse__applicant=user_id,
-                applicantresponse__status="Rejected",
+            joinprogram__program__is_active=True,
+            applicantresponse__applicant=user_id,
+            applicantresponse__status="Rejected",
         ):
             raise serializers.ValidationError(
                 {"detail": "You are rejected in previous stage, therefore you can't send response."}
@@ -197,11 +195,8 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class StuffFinalResponseDescriptionModelViewSetSerializer(serializers.ModelSerializer):
-    author = serializers.PrimaryKeyRelatedField(
-        read_only=True,
-        default=serializers.CurrentUserDefault()
-    )
+class StuffFinalResponseDescriptionSerializer(serializers.ModelSerializer):
+    author = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
 
     class Meta:
         model = StuffFinalResponseDescription
@@ -211,7 +206,7 @@ class StuffFinalResponseDescriptionModelViewSetSerializer(serializers.ModelSeria
                 queryset=model.objects.all(),
                 fields=("author", "applicant_response"),
                 message="You have already evaluated this applicant_response. "
-                        "You can't create a new one, maybe you can use your previous response to update.",
+                "You can't create a new one, maybe you can use your previous response to update.",
             )
         ]
 
@@ -229,3 +224,9 @@ class StuffFinalResponseDescriptionModelViewSetSerializer(serializers.ModelSeria
         applicant_response.save()
 
         return attrs
+
+
+class StuffMembersResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StuffMembersResponse
+        fields = "__all__"

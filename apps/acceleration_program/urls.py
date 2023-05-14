@@ -8,6 +8,7 @@ from apps.acceleration_program.views import (
     StageModelViewSet,
     ApplicantResponseModelViewSet,
     StuffFinalResponseDescriptionModelViewSet,
+    StuffMembersResponseModelViewSet,
 )
 
 app_name: str = "acceleration_program"
@@ -19,7 +20,14 @@ router.register("stage", StageModelViewSet, basename="stage")
 router.register("join_program", JoinProgramModelViewSet, basename="join_program")
 router.register("applicant_response", ApplicantResponseModelViewSet, basename="applicant_response")
 router.register(
-    "stuff_response_with_description", StuffFinalResponseDescriptionModelViewSet, basename="stuff_response_with_description"
+    "stuff_final_response_with_description",
+    StuffFinalResponseDescriptionModelViewSet,
+    basename="stuff_final_response_with_description",
+)
+router.register(
+    "stuff_member_response",
+    StuffMembersResponseModelViewSet,
+    basename="stuff_member_response",
 )
 
 urlpatterns = [

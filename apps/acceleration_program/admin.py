@@ -8,7 +8,8 @@ from apps.acceleration_program.models import (
     AssignmentType,
     Assignment,
     ApplicantResponse,
-    StuffFinalResponseDescription
+    StuffFinalResponseDescription,
+    StuffMembersResponse
 )
 
 admin.site.register(AccelerationProgram)
@@ -19,3 +20,4 @@ admin.site.register(AssignmentType)
 admin.site.register(Assignment)
 admin.site.register(ApplicantResponse)
 admin.site.register(StuffFinalResponseDescription)
+admin.site.register(StuffMembersResponse)

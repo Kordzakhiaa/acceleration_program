@@ -131,3 +131,15 @@ class StuffFinalResponseDescription(models.Model):
 
         if self.author.user_type not in ["Stuff-Direction", "Admin"]:
             raise ValidationError("Author must be Stuff-Direction or Admin user")
+
+
+class StuffMembersResponse(models.Model):
+    author = models.ForeignKey(to=CustomUserModel, on_delete=models.CASCADE)
+    applicant_response = models.ForeignKey(to=ApplicantResponse, on_delete=models.CASCADE)
+    point = models.FloatField()
+
+    class Meta:
+        unique_together = ["author", "applicant_response"]
+
+    def __str__(self):
+        return f"author={self.author} - {self.applicant_response}"
