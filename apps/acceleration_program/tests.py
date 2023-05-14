@@ -1,9 +1,10 @@
 from datetime import date
 
+from django.db.models import ProtectedError
 from django.test import TestCase
 from django.utils import timezone
 
-from apps.acceleration_program.models import AccelerationProgram
+from apps.acceleration_program.models import AccelerationProgram, AssignmentType, Assignment
 from apps.directions.models import Direction
 
 
@@ -69,3 +70,48 @@ class AccelerationProgramTestCase(TestCase):
     def tearDown(self) -> None:
         self.direction.delete()
         self.program.delete()
+
+
+class AssignmentTypeTestCase(TestCase):
+    def setUp(self):
+        self.assignment_type = AssignmentType.objects.create(type='Test Type')
+
+    def test_model_creation(self):
+        # Test if the model was created successfully.
+        assignment_type = AssignmentType.objects.get(type='Test Type')
+        self.assertEqual(assignment_type.type, 'Test Type')
+
+    def test_model_str_representation(self):
+        # Test the string representation of the model.
+        assignment_type = AssignmentType.objects.get(type='Test Type')
+        self.assertEqual(str(assignment_type), 'Test Type')
+
+
+class AssignmentTestCase(TestCase):
+    def setUp(self):
+        self.assignment_type = AssignmentType.objects.create(type='Test Type')
+        self.assignment = Assignment.objects.create(
+            type=self.assignment_type,
+            description='Test Description'
+        )
+
+    def test_model_creation(self):
+        assignment = Assignment.objects.get(description='Test Description')
+        self.assertEqual(assignment.type, self.assignment_type)
+        self.assertEqual(assignment.description, 'Test Description')
+
+    def test_model_str_representation(self):
+        assignment = Assignment.objects.get(description='Test Description')
+        expected_str = f"Assignment_Type={self.assignment_type}"
+        self.assertEqual(str(assignment), expected_str)
+
+    def test_model_type_foreign_key(self):
+        assignment = Assignment.objects.get(description='Test Description')
+        self.assertEqual(assignment.type, self.assignment_type)
+
+    def test_model_type_on_delete_protect(self):
+        with self.assertRaises(ProtectedError):
+            self.assignment_type.delete()
+        self.assertTrue(
+            Assignment.objects.filter(type=self.assignment_type).exists()
+        )
