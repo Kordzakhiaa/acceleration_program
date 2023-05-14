@@ -10,7 +10,6 @@ from apps.acceleration_program.models import (
     ApplicantResponse,
     StuffResponseDescription,
 )
-from apps.accounts.models import CustomUserModel
 
 
 class AccelerationProgramSerializer(serializers.ModelSerializer):
