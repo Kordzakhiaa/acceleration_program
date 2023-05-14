@@ -32,10 +32,19 @@ class AccelerationProgramSerializer(serializers.ModelSerializer):
     def validate(self, attrs: "OrderedDict") -> "OrderedDict":
         """
         Method that validates AccelerationProgram instance based on name and status
+        and after validation it creates clocked schedule and periodic task based on
+        the acceleration program's registration_end_date
+        ---------------------------------------------------------------------------
         E.g:
-            name = Foo
-            status = True
-            And data in DB is already with this name and status, it will raise exception
+            {
+                "name": "Test Acceleration Program",
+                "registration_end_date": "2020-01-01"
+                ...
+            }
+            If the data with the same body is in DATABASE, it will raise an exception with status 400_BAD_REQUEST
+            If everything is OK it will create ClockedSchedule and PeriodicTask based on registration_end_date
+            and when time will come it will set status of this acceleration program to False
+            so after that no-one can register on this acceleration program
         """
 
         name, status, program_start_date, program_end_date, registration_start_date, registration_end_date = (
