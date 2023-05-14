@@ -1,31 +1,33 @@
 from datetime import date
+from io import StringIO
+from unittest import mock
 
 from django.db.models import ProtectedError
 from django.test import TestCase
 from django.utils import timezone
 
-from apps.acceleration_program.models import AccelerationProgram, AssignmentType, Assignment
+from apps.acceleration_program.models import AccelerationProgram, AssignmentType, Assignment, Stage
 from apps.directions.models import Direction
 
 
 class AccelerationProgramTestCase(TestCase):
     def setUp(self):
-        self.direction = Direction.objects.create(title='Test Direction', number_of_stages=3)
+        self.direction = Direction.objects.create(title="Test Direction", number_of_stages=3)
         self.program = AccelerationProgram.objects.create(
-            name='Test Program',
-            requirements='Test Requirements',
+            name="Test Program",
+            requirements="Test Requirements",
             program_start_date=date(2023, 1, 1),
             program_end_date=date(2023, 12, 31),
             registration_start_date=date(2022, 1, 1),
             registration_end_date=date(2022, 12, 31),
-            is_active=True
+            is_active=True,
         )
         self.program.directions.add(self.direction)
 
     def test_model_creation(self):
-        program = AccelerationProgram.objects.get(name='Test Program')
-        self.assertEqual(program.name, 'Test Program')
-        self.assertEqual(program.requirements, 'Test Requirements')
+        program = AccelerationProgram.objects.get(name="Test Program")
+        self.assertEqual(program.name, "Test Program")
+        self.assertEqual(program.requirements, "Test Requirements")
         self.assertEqual(program.program_start_date, date(2023, 1, 1))
         self.assertEqual(program.program_end_date, date(2023, 12, 31))
         self.assertEqual(program.registration_start_date, date(2022, 1, 1))
@@ -35,37 +37,37 @@ class AccelerationProgramTestCase(TestCase):
         self.assertEqual(program.directions.first(), self.direction)
 
     def test_model_str_representation(self):
-        program = AccelerationProgram.objects.get(name='Test Program')
+        program = AccelerationProgram.objects.get(name="Test Program")
         expected_str = "Test Program - active=True"
         self.assertEqual(str(program), expected_str)
 
     def test_model_default_values(self):
         program = AccelerationProgram.objects.create(
-            name='Test Program',
-            requirements='Test Requirements',
+            name="Test Program",
+            requirements="Test Requirements",
             program_start_date=date(2023, 1, 1),
             program_end_date=date(2023, 12, 31),
             registration_start_date=date(2022, 1, 1),
             registration_end_date=date(2022, 12, 31),
-            is_active=True
+            is_active=True,
         )
         self.assertEqual(program.is_active, True)
         self.assertEqual(program.created_at.date(), timezone.now().date())
         program.delete()
 
     def test_model_update(self):
-        program = AccelerationProgram.objects.get(name='Test Program')
-        program.name = 'Updated Program'
+        program = AccelerationProgram.objects.get(name="Test Program")
+        program.name = "Updated Program"
         program.is_active = False
         program.save()
         updated_program = AccelerationProgram.objects.get(pk=program.pk)
-        self.assertEqual(updated_program.name, 'Updated Program')
+        self.assertEqual(updated_program.name, "Updated Program")
         self.assertEqual(updated_program.is_active, False)
 
     def test_model_deletion(self):
-        program = AccelerationProgram.objects.get(name='Test Program')
+        program = AccelerationProgram.objects.get(name="Test Program")
         program.delete()
-        self.assertFalse(AccelerationProgram.objects.filter(name='Test Program').exists())
+        self.assertFalse(AccelerationProgram.objects.filter(name="Test Program").exists())
 
     def tearDown(self) -> None:
         self.direction.delete()
@@ -74,44 +76,78 @@ class AccelerationProgramTestCase(TestCase):
 
 class AssignmentTypeTestCase(TestCase):
     def setUp(self):
-        self.assignment_type = AssignmentType.objects.create(type='Test Type')
+        self.assignment_type = AssignmentType.objects.create(type="Test Type")
 
     def test_model_creation(self):
         # Test if the model was created successfully.
-        assignment_type = AssignmentType.objects.get(type='Test Type')
-        self.assertEqual(assignment_type.type, 'Test Type')
+        assignment_type = AssignmentType.objects.get(type="Test Type")
+        self.assertEqual(assignment_type.type, "Test Type")
 
     def test_model_str_representation(self):
         # Test the string representation of the model.
-        assignment_type = AssignmentType.objects.get(type='Test Type')
-        self.assertEqual(str(assignment_type), 'Test Type')
+        assignment_type = AssignmentType.objects.get(type="Test Type")
+        self.assertEqual(str(assignment_type), "Test Type")
 
 
 class AssignmentTestCase(TestCase):
     def setUp(self):
-        self.assignment_type = AssignmentType.objects.create(type='Test Type')
-        self.assignment = Assignment.objects.create(
-            type=self.assignment_type,
-            description='Test Description'
-        )
+        self.assignment_type = AssignmentType.objects.create(type="Test Type")
+        self.assignment = Assignment.objects.create(type=self.assignment_type, description="Test Description")
 
     def test_model_creation(self):
-        assignment = Assignment.objects.get(description='Test Description')
+        assignment = Assignment.objects.get(description="Test Description")
         self.assertEqual(assignment.type, self.assignment_type)
-        self.assertEqual(assignment.description, 'Test Description')
+        self.assertEqual(assignment.description, "Test Description")
 
     def test_model_str_representation(self):
-        assignment = Assignment.objects.get(description='Test Description')
+        assignment = Assignment.objects.get(description="Test Description")
         expected_str = f"Assignment_Type={self.assignment_type}"
         self.assertEqual(str(assignment), expected_str)
 
     def test_model_type_foreign_key(self):
-        assignment = Assignment.objects.get(description='Test Description')
+        assignment = Assignment.objects.get(description="Test Description")
         self.assertEqual(assignment.type, self.assignment_type)
 
     def test_model_type_on_delete_protect(self):
         with self.assertRaises(ProtectedError):
             self.assignment_type.delete()
-        self.assertTrue(
-            Assignment.objects.filter(type=self.assignment_type).exists()
+        self.assertTrue(Assignment.objects.filter(type=self.assignment_type).exists())
+
+
+class StageTestCase(TestCase):
+    def setUp(self):
+        self.assignment_type = AssignmentType.objects.create(type="Test Type")
+        self.assignment = Assignment.objects.create(type=self.assignment_type, description="Test Assignment")
+        self.stage = Stage.objects.create(assignment=self.assignment, name="Test Stage")
+
+    def test_model_creation(self):
+        stage = Stage.objects.get(name="Test Stage", assignment=self.assignment)
+        self.assertEqual(stage.assignment, self.assignment)
+        self.assertEqual(stage.name, "Test Stage")
+
+    def test_model_str_representation(self):
+        stage = Stage.objects.get(name="Test Stage")
+        self.assertEqual(str(stage), "name=Test Stage")
+
+    def test_model_assignment_foreign_key(self):
+        stage = Stage.objects.get(name="Test Stage")
+        self.assertEqual(stage.assignment, self.assignment)
+
+    def test_model_assignment_on_delete_protect(self):
+        with mock.patch("sys.stdout", new=StringIO()):
+            with self.assertRaises(ProtectedError) as cm:
+                self.assignment.delete()
+
+        expected_error_message = (
+            "Cannot delete some instances of model 'Assignment' "
+            "because they are referenced through protected foreign keys: 'Stage.assignment'."
         )
+        self.assertTrue(expected_error_message in str(cm.exception))
+        self.assertTrue(Assignment.objects.filter(pk=self.assignment.pk).exists())
+
+    def test_model_assignment_cascade_deletion(self):
+        self.stage.delete()
+        self.assignment.delete()
+        self.assertFalse(Stage.objects.filter(name='Test Stage').exists())
+
+
