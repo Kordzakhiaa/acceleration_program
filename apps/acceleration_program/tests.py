@@ -2,13 +2,100 @@ from datetime import date
 from io import StringIO
 from unittest import mock
 
+from django.contrib.auth import get_user_model
 from django.db.models import ProtectedError
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import timezone
+from rest_framework import status
+from rest_framework.test import APITestCase, APIClient
+from rest_framework_simplejwt.tokens import AccessToken
 
-from apps.acceleration_program.models import AccelerationProgram, AssignmentType, Assignment, Stage, JoinProgram
+from apps.acceleration_program.models import (
+    AccelerationProgram,
+    AssignmentType,
+    Assignment,
+    Stage,
+    JoinProgram,
+    Applicants,
+)
 from apps.accounts.models import CustomUserModel
 from apps.directions.models import Direction
+
+
+class ApplicantModelViewSetTestCase(APITestCase):
+    def setUp(self):
+        self.direction = Direction.objects.create(title="Test Direction", number_of_stages=3)  # noqa
+        self.program = AccelerationProgram.objects.create(
+            name="Test Program",
+            requirements="Test Requirements",
+            program_start_date=date(2023, 1, 1),
+            program_end_date=date(2023, 12, 31),
+            registration_start_date=date(2022, 1, 1),
+            registration_end_date=date(2022, 12, 31),
+            is_active=True,
+        )
+        self.join_program = JoinProgram.objects.create(program=self.program, direction=self.direction)
+        self.client = APIClient()
+        User = get_user_model()  # noqa
+        self.user = User.objects.create_user(email="testuser@example.com", password="testpass")
+        access_token = AccessToken.for_user(self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+
+    def test_list_applicants(self):
+        Applicants.objects.create(program_to_join=self.join_program, applicant=self.user)
+
+        url = reverse("acceleration_program:applicant-list")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["program_to_join"], self.join_program.pk)
+
+    def test_retrieve_applicant(self):
+        applicant = Applicants.objects.create(program_to_join=self.join_program, applicant=self.user)
+
+        url = reverse("acceleration_program:applicant-detail", args=[applicant.pk])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["program_to_join"], self.join_program.pk)
+
+    def test_create_applicant(self):
+        url = reverse("acceleration_program:applicant-list")
+        data = {
+            "program_to_join": self.join_program.pk,
+            "applicant": self.user.pk,
+            "request_status": Applicants.RequestStatuses.PENDING,
+        }
+
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["program_to_join"], self.join_program.pk)
+        self.assertEqual(Applicants.objects.count(), 1)
+
+    def test_update_applicant(self):
+        applicant = Applicants.objects.create(program_to_join=self.join_program, applicant=self.user)
+        url = reverse("acceleration_program:applicant-detail", args=[applicant.pk])
+        data = {
+            "program_to_join": self.join_program.pk,
+            "applicant": self.user.pk,
+            "request_status": Applicants.RequestStatuses.ACCEPTED,
+        }
+
+        response = self.client.put(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["request_status"], Applicants.RequestStatuses.ACCEPTED)
+
+    def test_delete_applicant(self):
+        applicant = Applicants.objects.create(program_to_join=self.join_program, applicant=self.user)
+        url = reverse("acceleration_program:applicant-detail", args=[applicant.pk])
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Applicants.objects.count(), 0)
 
 
 class AccelerationProgramTestCase(TestCase):
