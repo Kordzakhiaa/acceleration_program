@@ -198,7 +198,7 @@ class ApplicantResponseSerializer(serializers.ModelSerializer):
 
 
 class StuffFinalResponseDescriptionModelViewSetSerializer(serializers.ModelSerializer):
-    applicant = serializers.PrimaryKeyRelatedField(
+    author = serializers.PrimaryKeyRelatedField(
         read_only=True,
         default=serializers.CurrentUserDefault()
     )
