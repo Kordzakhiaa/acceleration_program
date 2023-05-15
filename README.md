@@ -1,8 +1,11 @@
 # "Acceleration Program" API
 
-Description:
 
-## Project equirements
+
+## Documentation
+For the project documentation **[click here!](https://docs.google.com/document/d/1IAGCr9H1FqD7WHoNg15XPgebvGu7l7iuMGI5bzsaZmk/edit)**
+
+## Project requirements
 
 * docker >= 20.10.14
   ```docker --version```
@@ -59,6 +62,3 @@ You can run any command you would run on you host machine...
 * python manage.py migrate
 * python manage.py startapp <app_name>
 * python manage.py createsuperuser
-
-## API Endpoints:
-test
